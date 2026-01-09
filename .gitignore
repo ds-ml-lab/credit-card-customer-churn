@@ -1,0 +1,23 @@
+# --- Python Internals ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+
+# --- Virtual Environments ---
+venv/
+env/
+.venv/
+.env
+
+# --- Logs & Cache ---
+*.log
+.cache/
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+.DS_Store
+*.swp
