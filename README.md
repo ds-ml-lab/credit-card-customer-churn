@@ -90,5 +90,5 @@ streamlit run app.py
 
 ## Author
 
-**Pedro Siqueira**
+**Pedro Siqueira**  
 [LinkedIn](https://www.linkedin.com/in/phenriquels/) | [GitHub](https://github.com/phenriquels01)
