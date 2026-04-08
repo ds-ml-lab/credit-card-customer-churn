@@ -96,7 +96,7 @@ streamlit run app.py
     - Structuring and brainstorming ideas.
     - Refining English text for clarity and tone.
     - Debugging and syntax correction.
-    - Structuring the RAG pipeline and Streamlit interface.
+    - Structuring the policy document and the Streamlit interface.
     
 ---
 

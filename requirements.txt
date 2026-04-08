@@ -22,3 +22,4 @@ langchain-huggingface
 langchain-chroma
 pypdf
 chromadb
+protobuf==3.20.3
