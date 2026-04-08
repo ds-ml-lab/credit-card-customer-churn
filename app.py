@@ -51,7 +51,7 @@ st.markdown(
 # 2. Load Model Artifact
 @st.cache_resource
 def load_artifact():
-    with open("/model/churn_model.pickle", "rb") as f:
+    with open("model/churn_model.pickle", "rb") as f:
         return pickle.load(f)
 
 try:
