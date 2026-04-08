@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project implements an end-to-end data science workflow to address customer churn in a credit card business context, combining statistical analysis and machine learning to model attrition while uncovering the behavioral drivers embedded in the [BankChurners](https://www.kaggle.com/datasets/sakshigoyal7/credit-card-customers) dataset. Beyond predictive performance, the solution emphasizes interpretability, generalization and business relevance, enabling reliable application in real-world decision-making scenarios.
+This project implements an end-to-end data science workflow to address customer churn in a credit card business context, combining statistical analysis and machine learning to model attrition while uncovering the behavioral drivers embedded in the [BankChurners](https://www.kaggle.com/datasets/sakshigoyal7/credit-card-customers) dataset. Beyond predictive performance, the solution integrates a Retrieval-Augmented Generation (RAG) system to automate prescriptive action plans, ensuring that retention efforts are not only accurate but fully aligned with corporate policies and business rules.
 
 ---
 
@@ -23,7 +23,10 @@ credit-card-customer-churn/
 │   ├── BankChurners.csv
 │   ├── BankChurners_clean.csv
 │   └── BankChurners_processed.csv
+│
+├── customer_retention_policy.pdf
 ├── app.py
+├── .env.example
 ├── requirements.txt
 └── README.md
 ```
@@ -52,7 +55,10 @@ A Recall of 90% ensures that the vast majority of potential churners are capture
 
 ## Deployment
 
-The final model is deployed via a **Streamlit** application designed for real-time risk assessment. The simulator's inputs focus on the key behavioral drivers identified during the interpretability analysis, allowing stakeholders to perform real-time inference without requiring a local Python environment.
+The final model is deployed via a **Streamlit** application designed for real-time risk assessment and prescriptive action planning. 
+
+- **Predictive Engine:** The interface focuses on the key behavioral drivers identified during the interpretability (SHAP) analysis, running an XGBoost algorithm in the background to calculate the exact Churn Propensity Score (CPS).
+- **Prescriptive Engine (RAG):** Based on the calculated risk, a Retrieval-Augmented Generation system powered by **Llama 3.3 70B** (via Groq API) is triggered. It cross-references the customer's profile with the vectorized internal policy document (`customer_retention_policy.pdf`) stored in **ChromaDB**, instantly outputting a customized, budget-approved retention offer and communication strategy.
 
 [**Live Dashboard**](https://credit-card-customer-churn.streamlit.app)
 
@@ -60,7 +66,7 @@ The final model is deployed via a **Streamlit** application designed for real-ti
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/ds-ml-lab/credit-card-customer-churn.git
+git clone [https://github.com/ds-ml-lab/credit-card-customer-churn.git](https://github.com/ds-ml-lab/credit-card-customer-churn.git)
 cd credit-card-customer-churn
 ```
 
@@ -69,7 +75,13 @@ cd credit-card-customer-churn
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+3. Set up your environment variables:
+Rename the `.env.example` file to `.env` and insert your Groq API key:
+```text
+GROQ_API_KEY=your_api_key_here
+```
+
+4. Run the application:
 ```bash
 streamlit run app.py
 ```
@@ -80,15 +92,14 @@ streamlit run app.py
 
 1. This repository is intended for educational purposes only. The dataset is used under fair use guidelines for non-commercial study and skill demonstration.
 
-2. This project was developed with the assistance of LLMs to enhance productivity in four specific areas:
+2. This project was developed with the assistance of LLMs to enhance productivity in specific areas:
     - Structuring and brainstorming ideas.
     - Refining English text for clarity and tone.
     - Debugging and syntax correction.
-    - Accelerating the development of the Streamlit interface.
+    - Structuring the RAG pipeline and Streamlit interface.
     
 ---
 
 ## Author
 
-**Pedro Siqueira**  
-[LinkedIn](https://www.linkedin.com/in/phenriquels/) | [GitHub](https://github.com/phenriquels01)
+**Pedro Siqueira** [LinkedIn](https://www.linkedin.com/in/phenriquels/) | [GitHub](https://github.com/phenriquels01)

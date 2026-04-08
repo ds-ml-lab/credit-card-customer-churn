@@ -1,4 +1,4 @@
-streamlit
+# --- Machine Learning & Data ---
 pandas
 numpy
 scikit-learn
@@ -7,3 +7,18 @@ matplotlib
 seaborn
 optuna
 shap
+
+# --- App Interface ---
+streamlit
+python-dotenv
+
+
+# --- GenAI ---
+langchain
+langchain-community
+langchain-text-splitters
+langchain-groq
+langchain-huggingface
+langchain-chroma
+pypdf
+chromadb
