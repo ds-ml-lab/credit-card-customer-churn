@@ -63,29 +63,27 @@ except Exception as e:
     st.error(f"System Error: Model artifact not found. {e}")
     st.stop()
 
-# 3. Função do RAG (TOTALMENTE LOCAL)
+# 3. RAG
 @st.cache_resource(show_spinner=False)
 def setup_rag():
-    caminho_pdf = "customer_retention_policy.pdf"
+    pdf_path = "customer_retention_policy.pdf"
     
-    if not os.path.exists(caminho_pdf):
-        raise FileNotFoundError(f"Arquivo {caminho_pdf} não encontrado na pasta.")
+    if not os.path.exists(pdf_path):
+        raise FileNotFoundError(f"File {pdf_path} not found in the directory.")
 
-    loader = PyPDFLoader(caminho_pdf)
-    documentos = loader.load()
+    loader = PyPDFLoader(pdf_path)
+    documents = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1200, chunk_overlap=150)
-    textos_divididos = text_splitter.split_documents(documentos)
+    split_texts = text_splitter.split_documents(documents)
 
-    # 1. Bibliotecário
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    banco_vetorial = Chroma.from_documents(textos_divididos, embeddings)
+    vector_store = Chroma.from_documents(split_texts, embeddings)
 
-    # 2. Escritor
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     
     if not GROQ_API_KEY:
-        st.error("Erro: GROQ_API_KEY não encontrada no arquivo .env")
+        st.error("Error: GROQ_API_KEY not found in the .env file.")
         st.stop()
     
     llm = ChatGroq(
@@ -94,15 +92,15 @@ def setup_rag():
         model_name="llama-3.3-70b-versatile"
     )
 
-    retriever = banco_vetorial.as_retriever(search_kwargs={"k": 10})
+    retriever = vector_store.as_retriever(search_kwargs={"k": 10})
 
     prompt = ChatPromptTemplate.from_template(
-        """Responda a pergunta usando APENAS o contexto fornecido.
+        """Answer the question using ONLY the provided context.
 
-Contexto:
+Context:
 {context}
 
-Pergunta:
+Question:
 {input}
 """
     )
@@ -125,14 +123,12 @@ total_trans_amt = st.sidebar.number_input(
     min_value=500.0, max_value=18500.0, value=4000.0, step=100.0,
 )
 
-# Cálculo dinâmico 
 calculated_avg_ticket = (total_trans_amt / total_trans_ct) if total_trans_ct > 0 else 0.0
 
-# O truque: Usar um text_input sem atribuir a nenhuma variável
 st.sidebar.text_input(
     "Average Ticket Size",
     value=f"{calculated_avg_ticket:,.2f}",
-    disabled=True # Já formata com a vírgula de milhar
+    disabled=True
 )
 
 total_revolving_bal = st.sidebar.number_input(
@@ -160,15 +156,15 @@ if predict_btn:
 
     # 6. Results Dashboard
     if probability < 0.30:
-        status_color = "#28a745" # Verde
+        status_color = "#28a745"
         status_label = "LOW RISK"
         recommendation = "This customer shows strong engagement and low churn risk. No immediate retention action is required."
     elif probability < 0.70:
-        status_color = "#ffc107" # Amarelo
+        status_color = "#ffc107"
         status_label = "MODERATE RISK"
         recommendation = "Monitor closely. Consider engagement incentives below."
     else:
-        status_color = "#dc3545" # Vermelho
+        status_color = "#dc3545"
         status_label = "HIGH RISK"
         recommendation = "Urgent retention action required below."
 
@@ -187,7 +183,6 @@ if predict_btn:
         with col2:
             st.metric(label="Churn Probability", value=f"{probability:.1%}")
 
-    # IA Prescritiva apenas para Risco Moderado e Alto
     if probability >= 0.30: 
         st.divider()
         st.markdown("### AI Retention Strategy")
@@ -224,18 +219,18 @@ Generate the response EXACTLY in this format:
 CRITICAL FORMATTING RULES:
 1. LANGUAGE: English only.
 2. OBJECTIVITY: ALWAYS be objective and direct. No introductory or concluding filler text.
-3. INLINE TEXT: The text for Diagnosis, Offer, and Channel Strategy MUST have a line break after the colon.
+3. INLINE TEXT: The text for Diagnosis, Risk, Offer, and Channel Strategy MUST have a line break after the colon.
 4. NO SYMBOLS: Never use '$', use 'USD'.
 """
                 
-                resposta = qa_chain.invoke({"input": prompt_text})
+                response = qa_chain.invoke({"input": prompt_text})
 
-                texto_limpo = resposta["answer"]
+                clean_text = response["answer"]
                 
                 st.markdown(
                     f"""
                     <p align="justify">
-                        {texto_limpo}
+                        {clean_text}
                     </p>
                     """, 
                     unsafe_allow_html=True
@@ -244,7 +239,7 @@ CRITICAL FORMATTING RULES:
             except FileNotFoundError as fnf_error:
                 st.error(str(fnf_error))
             except Exception as e:
-                st.error(f"Erro na IA Local: {e}")
+                st.error(f"Local AI Error: {e}")
 
 else:
     st.info("Configure customer parameters on the sidebar and click 'Run Prediction'.")
