@@ -192,7 +192,7 @@ if predict_btn:
                 qa_chain = setup_rag()
                 
                 prompt_text = f"""
-The predictive model detected a Churn Propensity Score (CPS) of {probability:.1%}.
+The predictive model analyzed the data and officially classified this customer as: {status_label} (Churn Propensity Score: {probability:.1%}).
 
 Current customer profile:
 - Transaction count: {total_trans_ct}
@@ -204,13 +204,13 @@ You are an expert retention strategist. Based ONLY on the rules from the interna
 
 Generate the response EXACTLY in this format:
 
-<b>DIAGNOSIS:</b> (Write the evaluation of the metrics on the SAME line as the title. State the primary behavioral driver. Do not invent backstories).
+<b>DIAGNOSIS:</b> (Write the evaluation of the metrics. State the primary behavioral driver. Do not invent backstories).
 
-<b>RISK CLASSIFICATION & MIC:</b> (Write the exact Risk Classification and the Maximum Intervention Cost limit based on the CPS tier, on the SAME line as the title).
+<b>RISK CLASSIFICATION & MIC:</b> (Write EXACTLY "{status_label}" and the Maximum Intervention Cost limit associated with it from the policy).
 
-<b>AUTHORIZED OFFER:</b> (Write the exact program name and applied rule on the SAME line as the title. Ensure the offer respects the MIC limit).
+<b>AUTHORIZED OFFER:</b> (Write the exact program name and applied rule. Ensure the offer respects the MIC limit).
 
-<b>CHANNEL STRATEGY:</b> (Write the channel name and applied rule on the SAME line as the title, followed by a period.).
+<b>CHANNEL STRATEGY:</b> (Write the channel name and applied rule, followed by a period.).
 <ul>
   <li>(Tactical tip 1)</li>
   <li>(Tactical tip 2)</li>
